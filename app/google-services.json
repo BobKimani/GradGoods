@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "665937448637",
+    "project_id": "gradgoods-4583d",
+    "storage_bucket": "gradgoods-4583d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665937448637:android:14572a7f0c997e93bb31d4",
+        "android_client_info": {
+          "package_name": "com.example.gradgoods"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAX0pyadEhztuGFrTDMpZlUwB789wDMZtQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
