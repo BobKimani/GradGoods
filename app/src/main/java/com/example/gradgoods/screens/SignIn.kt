@@ -110,11 +110,13 @@ fun SignInScreen() {
             Text(
                 "Dont have an account? ",
                 fontSize = 16.sp,
-                color = Color.Black
+                color = Color.Black,
+                fontWeight= FontWeight.Bold
             )
             Text(
                 "Sign Up",
                 fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
                 color = Color(0xFFA020F0),
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier.clickable {/*Handles click */ }
