@@ -35,7 +35,7 @@ fun SignInScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFFF5E5F3))
-            .padding(16.dp),
+            .padding(top = 50.dp, start = 15.dp,end = 15.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.padding(top= 100.dp))
@@ -99,7 +99,7 @@ fun SignInScreen() {
         Spacer(modifier = Modifier.height(30.dp))
 
         Image(
-            painter = painterResource(id = R.drawable.google), // Ensure this drawable is available
+            painter = painterResource(id = R.drawable.google),
             contentDescription = "Sign in with Google",
             modifier = Modifier.size(48.dp)
         )
@@ -124,6 +124,7 @@ fun SignInScreen() {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

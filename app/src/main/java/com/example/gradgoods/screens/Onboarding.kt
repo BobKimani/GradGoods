@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -26,7 +27,7 @@ import com.example.gradgoods.R
 
 
 @Composable
-fun OnboardingScreen() {
+fun OnboardingScreen(onContinue: () -> Unit) {
     val pages = listOf(
         OnboardingPage("GradGoods", "Welcome to GradGoods. Let's Shop!", R.drawable.onboard),
         OnboardingPage("GradGoods", "We are at your convenience", R.drawable.onboard2)
@@ -73,6 +74,10 @@ fun OnboardingScreen() {
                         if (pagerState.currentPage < pages.size - 1) {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         }
+                        else {
+                            onContinue()
+                        }
+
                     }
                 },
                 shape = RoundedCornerShape(12.dp), // Rounded button
@@ -133,8 +138,9 @@ fun OnboardingPageUI(page: OnboardingPage) {
 
 data class OnboardingPage(val title: String, val description: String, val image: Int)
 
+/**
 @Preview(showBackground = true)
 @Composable
 fun OnboardingScreenPreview() {
     OnboardingScreen()
-}
+}  **/

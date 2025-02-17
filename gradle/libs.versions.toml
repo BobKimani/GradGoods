@@ -11,6 +11,8 @@ composeBom = "2024.04.01"
 accompanist = "0.32.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.2.0"
+compose = "1.6.0"
+navigation = "2.7.7"
 
 
 [libraries]
@@ -31,7 +33,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
-
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
