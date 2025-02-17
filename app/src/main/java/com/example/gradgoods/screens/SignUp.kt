@@ -20,11 +20,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.navigation.NavController
+import com.example.gradgoods.nav.Screen
 import com.example.gradgoods.R
 
 @OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -33,7 +36,7 @@ fun SignUpScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFFF5E5F3))
-            .padding(16.dp),
+            .padding(top = 50.dp, start = 15.dp,end = 15.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.padding(top= 100.dp))
@@ -112,14 +115,16 @@ fun SignUpScreen() {
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFFA020F0),
                 textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable { /* Handle navigation to Sign In */ }
+                modifier = Modifier.clickable { navController.navigate(Screen.SignIn.route) }
             )
         }
     }
 }
 
+
+/***
 @Preview(showBackground = true)
 @Composable
 fun SignUpPreview() {
     SignUpScreen()
-}
+}   ***/

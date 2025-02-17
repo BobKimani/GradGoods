@@ -1,5 +1,6 @@
 package com.example.gradgoods.ui.auth
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,12 +23,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.navigation.NavController
+import com.example.gradgoods.nav.Screen
 import com.example.gradgoods.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
-fun SignInScreen() {
+fun SignInScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -119,15 +122,15 @@ fun SignInScreen() {
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFFA020F0),
                 textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable {/*Handles click */ }
+                modifier = Modifier.clickable {navController.navigate(Screen.SignUp.route) }
             )
         }
     }
 }
 
-
+/***
 @Preview(showBackground = true)
 @Composable
 fun SignInPreview() {
     SignInScreen()
-}
+} **/

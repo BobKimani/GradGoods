@@ -6,12 +6,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.gradgoods.ui.auth.SignInScreen
+import com.example.gradgoods.ui.auth.SignUpScreen
 import com.example.gradgoods.ui.screens.OnboardingScreen
 
 
 sealed class Screen(val route: String) {
     object Onboarding : Screen("onboarding")
     object SignIn : Screen("signin")
+    object SignUp : Screen("signup")
 }
 
 @Composable
@@ -25,7 +27,11 @@ fun AppNavGraph() {
             })
         }
         composable(Screen.SignIn.route) {
-            SignInScreen()
+            SignInScreen(navController)
         }
+        composable(Screen.SignUp.route) {
+            SignUpScreen(navController)
+        }
+
     }
 }
