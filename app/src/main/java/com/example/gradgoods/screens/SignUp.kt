@@ -1,8 +1,9 @@
-package com.example.gradgoods.ui.auth
+package com.example.gradgoods.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,34 +13,46 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.clickable
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.gradgoods.nav.Screen
 import com.example.gradgoods.R
+import com.example.gradgoods.auth.AuthViewModel
+import com.example.gradgoods.nav.Screen
+import com.example.gradgoods.nav.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
-fun SignUpScreen(navController: NavController) {
+fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    val user by viewModel.user.collectAsStateWithLifecycle()
+
+    // ✅ Updated to navigate to HomeScreen on successful sign-up
+    fun onContinue() {
+        if (email.isNotBlank() && password == confirmPassword) {
+            viewModel.signUp(email, password) {
+                navController.navigate(Screen.Home.route) // Navigate to HomeScreen
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFFF5E5F3))
-            .padding(top = 50.dp, start = 15.dp,end = 15.dp),
+            .padding(top = 50.dp, start = 15.dp, end = 15.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.padding(top= 100.dp))
+        Spacer(modifier = Modifier.padding(top = 100.dp))
 
         Text(
             "Register Account",
@@ -65,6 +78,7 @@ fun SignUpScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp)
         )
+
         Spacer(modifier = Modifier.height(30.dp))
 
         OutlinedTextField(
@@ -76,6 +90,7 @@ fun SignUpScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp)
         )
+
         Spacer(modifier = Modifier.height(30.dp))
 
         OutlinedTextField(
@@ -88,10 +103,10 @@ fun SignUpScreen(navController: NavController) {
             shape = RoundedCornerShape(24.dp)
         )
 
-        Spacer(modifier= Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(50.dp))
 
         Button(
-            onClick = { /* Handle sign-up */ },
+            onClick = { onContinue() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -107,8 +122,9 @@ fun SignUpScreen(navController: NavController) {
                 "Already have an account? ",
                 fontSize = 16.sp,
                 color = Color.Black,
-                fontWeight= FontWeight.Bold
+                fontWeight = FontWeight.Bold
             )
+
             Text(
                 "Sign In",
                 fontSize = 16.sp,
@@ -121,10 +137,10 @@ fun SignUpScreen(navController: NavController) {
     }
 }
 
-
 /***
 @Preview(showBackground = true)
 @Composable
 fun SignUpPreview() {
-    SignUpScreen()
-}   ***/
+// Ensure proper preview setup here
+}
+ ***/
