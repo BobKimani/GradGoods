@@ -24,10 +24,10 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.gradgoods.R
-
+import com.example.gradgoods.nav.Screen
 
 @Composable
-fun OnboardingScreen(onContinue: () -> Unit) {
+fun OnboardingScreen( onContinue: () -> Unit) {
     val pages = listOf(
         OnboardingPage("GradGoods", "Welcome to GradGoods. Let's Shop!", R.drawable.onboard),
         OnboardingPage("GradGoods", "We are at your convenience", R.drawable.onboard2)

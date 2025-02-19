@@ -17,10 +17,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gradgoods.R
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.gradgoods.auth.AuthViewModel
 import com.example.gradgoods.nav.Screen
 
@@ -136,10 +139,9 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
     }
 }
 
-/***
+
 @Preview(showBackground = true)
 @Composable
 fun SignInPreview() {
-SignInScreen()
+    SignInScreen(rememberNavController(), viewModel = AuthViewModel())
 }
- ***/
