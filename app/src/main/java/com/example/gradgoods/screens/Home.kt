@@ -1,12 +1,17 @@
 package com.example.gradgoods.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -17,6 +22,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -34,23 +40,35 @@ import com.example.gradgoods.products.ProductsViewModel
 @Composable
 fun HomeScreen(
     navController: NavController,
-    // CHANGED: Inject your ProductsViewModel
     productsViewModel: ProductsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF5E5F3))
-    ) {
-        TopBar(navController)
-        CashbackBanner()
-        SpecialForYouSection()
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF5E5F3))
+                .padding(bottom = 56.dp), // Leaves space for BottomNavBar
+            contentPadding = PaddingValues(bottom = 80.dp) // Prevents last item from being hidden
+        ) {
+            item { TopBar(navController) }
+            item { CashbackBanner() }
+            item {
+                CategoryList(
+                    categories = listOf("Clothing", "Gadgets", "Fashion", "Food", "Sports", "Books"),
+                    onCategoryClick = { categories ->
+                        Log.d("CategoryClick", "Clicked on: $categories")
+                    }
+                )
+            }
+            item { NewArrivals() }
+            item { PopularProductsSection(productsViewModel) }
+        }
 
-        // CHANGED: Display products from Firestore
-        PopularProductsSection(productsViewModel)
-
-        Spacer(modifier = Modifier.weight(1f))
-        BottomNavBar(selectedRoute = "home", onItemSelected = { navController.navigate(it) })
+        BottomNavBar(
+            selectedRoute = "home",
+            onItemSelected = { navController.navigate(it) },
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 
@@ -59,7 +77,7 @@ fun TopBar(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(top = 60.dp, start = 16.dp, end = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         OutlinedTextField(
@@ -85,6 +103,7 @@ fun TopBar(navController: NavController) {
 
 @Composable
 fun CashbackBanner() {
+    Spacer(modifier = Modifier.height(25.dp))
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,6 +125,41 @@ fun CashbackBanner() {
 }
 
 @Composable
+fun CategoryList(categories: List<String>, onCategoryClick: (String) -> Unit) {
+    Spacer(modifier = Modifier.height(15.dp))
+    Text(
+        "Categories",
+        modifier = Modifier.padding(start = 16.dp),
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp
+    )
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        items(categories) { category ->
+            Box(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color(0xFFA020F0))
+                    .clickable { onCategoryClick(category) }
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = category,
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
 fun CategoryItem(title: String, icon: ImageVector) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(
@@ -117,30 +171,39 @@ fun CategoryItem(title: String, icon: ImageVector) {
 }
 
 @Composable
-fun SpecialForYouSection() {
-    Text(
-        "Special for you",
-        modifier = Modifier.padding(16.dp),
-        fontWeight = FontWeight.Bold,
-        fontSize = 20.sp
-    )
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        SpecialItem("Fashion")
-        SpecialItem("Refreshments")
+fun NewArrivals() {
+    Column {
+        Text(
+            text = "New items for you",
+            modifier = Modifier.padding(16.dp),
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp
+        )
+
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
+        ) {
+            items(listOf("Fashion", "Refreshments", "Sports", "Gadgets")) { category ->
+                SpecialItem(category)
+            }
+        }
     }
 }
 
 @Composable
 fun SpecialItem(title: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(8.dp)
+    ) {
         Box(
             modifier = Modifier
                 .size(150.dp)
                 .background(Color.LightGray, RoundedCornerShape(16.dp))
         )
+        Spacer(modifier = Modifier.height(8.dp))
         Text(title, fontWeight = FontWeight.Bold)
     }
 }
@@ -151,8 +214,10 @@ fun PopularProductsSection(productsViewModel: ProductsViewModel) {
     // Observe products from Firestore
     val products by productsViewModel.products.collectAsState()
 
+//    Spacer(modifier = Modifier.height(25.dp))
+
     Text(
-        "Popular Product",
+        "Available Product",
         modifier = Modifier.padding(16.dp),
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp
@@ -169,10 +234,13 @@ fun PopularProductsSection(productsViewModel: ProductsViewModel) {
             ProductItemPlaceholder("Gloves XC", "Ksh.3000")
         }
     } else {
-        // Render real products from Firestore using a LazyRow
+        // Render real products using a LazyRow
         LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(15.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+
         ) {
             items(products) { product ->
                 ProductItem(product)
@@ -204,11 +272,12 @@ fun ProductItem(product: Product) {
             painter = painter,
             contentDescription = product.name,
             modifier = Modifier
-                .size(120.dp)
-                .background(Color.LightGray, RoundedCornerShape(16.dp))
+                .size(150.dp)
+
+
         )
         Text(product.name, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-        Text("Ksh.${product.price}", color = Color.Red, fontSize = 14.sp)
+        Text("Ksh.${product.price}", color = Color.Black, fontSize = 14.sp)
     }
 }
 
