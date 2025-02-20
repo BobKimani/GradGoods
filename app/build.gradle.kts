@@ -55,6 +55,8 @@ dependencies {
     implementation(libs.accompanist.pager.indicators)
     implementation(libs.firebase.auth)
     implementation(libs.compose.navigation)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

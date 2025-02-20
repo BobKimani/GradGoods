@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.gradgoods.R
 import com.example.gradgoods.nav.Screen
+import com.example.gradgoods.nav.BottomNavBar
 import com.google.android.play.integrity.internal.f
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +40,8 @@ fun HomeScreen(navController: NavController ) {
         CashbackBanner()
         SpecialForYouSection()
         PopularProductsSection()
+        Spacer(modifier = Modifier.weight(1f))
+        BottomNavBar(selectedRoute = "home", onItemSelected = { navController.navigate(it) })
     }
 }
 

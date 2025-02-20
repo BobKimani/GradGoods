@@ -34,6 +34,9 @@ accompanist-pager = { module = "com.google.accompanist:accompanist-pager", versi
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore-ktx", version = "24.9.0" }
+firebase-storage = { module = "com.google.firebase:firebase-storage-ktx", version = "20.3.0" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
