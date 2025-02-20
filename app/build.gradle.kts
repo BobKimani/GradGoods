@@ -57,6 +57,9 @@ dependencies {
     implementation(libs.compose.navigation)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

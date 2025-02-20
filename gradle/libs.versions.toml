@@ -13,6 +13,8 @@ googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.2.0"
 compose = "1.6.0"
 navigation = "2.8.7"
+firebase-bom = "33.9.0"
+coil = "2.5.0"
 
 
 [libraries]
@@ -36,6 +38,9 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore-ktx", version = "24.9.0" }
 firebase-storage = { module = "com.google.firebase:firebase-storage-ktx", version = "20.3.0" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil-compose = {module = "io.coil-kt:coil-compose", version.ref = "coil"}
 
 
 [plugins]
