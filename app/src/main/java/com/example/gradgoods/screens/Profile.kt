@@ -111,7 +111,7 @@ fun ProfileScreen(navController: NavController, auth: FirebaseAuth) {
                     colors = ButtonDefaults.buttonColors(containerColor = GradGoodsPurple),
 
                 ) {
-                    Text("Log Out", color = Color.Black, fontSize = 20.sp)
+                    Text("Log Out", color = Color.White, fontSize = 20.sp)
                 }
             }
         }

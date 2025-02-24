@@ -26,19 +26,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter // CHANGED: Import Coil
+import com.example.gradgoods.model.CartViewModel
 import com.example.gradgoods.nav.BottomNavBar
-import com.example.gradgoods.products.Product
-import com.example.gradgoods.products.ProductsViewModel
+import com.example.gradgoods.model.Product
+import com.example.gradgoods.model.ProductsViewModel
 import com.example.gradgoods.nav.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
-    productsViewModel: ProductsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    productsViewModel: ProductsViewModel = viewModel(),
+    cartViewModel: CartViewModel = viewModel()
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -48,7 +51,7 @@ fun HomeScreen(
                 .padding(bottom = 56.dp), // Leaves space for BottomNavBar
             contentPadding = PaddingValues(bottom = 80.dp) // Prevents last item from being hidden
         ) {
-            item { TopBar(navController) }
+            item { TopBar(navController,cartViewModel) }
             item { CashbackBanner() }
             item {
                 CategoryList(
@@ -71,7 +74,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun TopBar(navController: NavController) {
+fun TopBar(navController: NavController,cartViewModel: CartViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -89,12 +92,13 @@ fun TopBar(navController: NavController) {
         Spacer(modifier = Modifier.width(15.dp))
 
         IconButton(onClick = {
-            // navController.navigate(Screen.Cart.route)
+            navController.currentBackStackEntry
+                ?.savedStateHandle
+                ?.set("cartItems", ArrayList(cartViewModel.cartItems.value)) // ✅ Ensure it's an ArrayList
+
+            navController.navigate(Screen.Cart.route)
         }) {
-            Icon(
-                Icons.Default.ShoppingCart,
-                contentDescription = "Cart"
-            )
+            Icon(Icons.Default.ShoppingCart, contentDescription = "Cart")
         }
     }
 }

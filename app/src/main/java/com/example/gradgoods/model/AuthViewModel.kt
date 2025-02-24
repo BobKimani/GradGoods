@@ -1,4 +1,4 @@
-package com.example.gradgoods.auth
+package com.example.gradgoods.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -2,11 +2,8 @@ package com.example.gradgoods.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -22,10 +19,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.gradgoods.products.Product
+import com.example.gradgoods.model.Product
+import com.example.gradgoods.nav.Screen
+import com.example.gradgoods.screens.CartScreen
+import com.example.gradgoods.screens.HomeScreen
+import com.example.gradgoods.model.CartViewModel
 
 @Composable
-fun ProductScreen(navController: NavController, product: Product) {
+fun ProductScreen(navController: NavController, product: Product,cartViewModel: CartViewModel) {
     var quantity by remember { mutableStateOf(1) }
 
     val GradGoodsPurple = Color(0xFF6A1B9A)
@@ -56,7 +57,7 @@ fun ProductScreen(navController: NavController, product: Product) {
             contentDescription = product.name,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp)
+                .height(400.dp)
                 .clip(RoundedCornerShape(20.dp)),
             contentScale = ContentScale.Crop
         )
@@ -92,7 +93,10 @@ fun ProductScreen(navController: NavController, product: Product) {
 
         // Add to Cart Button
         Button(
-            onClick = { /* Handle Add to Cart */ },
+            onClick = {
+                cartViewModel.addToCart(product.copy(quantity = quantity))
+                navController.navigate(Screen.Cart.route)
+                      },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
