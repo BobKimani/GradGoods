@@ -11,7 +11,9 @@ import com.example.gradgoods.screens.SignUpScreen
 import com.example.gradgoods.ui.screens.OnboardingScreen
 import com.example.gradgoods.auth.AuthViewModel
 import com.example.gradgoods.screens.HomeScreen
+import com.example.gradgoods.screens.ProductScreen
 import com.example.gradgoods.screens.ProfileScreen
+import com.example.gradgoods.products.Product
 import com.google.firebase.auth.FirebaseAuth
 
 sealed class Screen(val route: String) {
@@ -20,6 +22,7 @@ sealed class Screen(val route: String) {
     object SignUp : Screen("signup")
     object Home : Screen("home") // ✅ Added Home route placeholder for navigation after sign-in
     object Profile : Screen("profile")
+    object Product : Screen("product")
 }
 
 @Composable
@@ -29,7 +32,9 @@ fun AppNavGraph() {
     // ✅ Initialize AuthViewModel once and share across screens
     val authViewModel: AuthViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = Screen.Onboarding.route) {
+    //change it later to Screen.Onboarding.route
+
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Onboarding.route) {
             OnboardingScreen(onContinue = {
                 navController.navigate(Screen.SignIn.route)
@@ -47,7 +52,15 @@ fun AppNavGraph() {
         composable(Screen.Profile.route) {
             ProfileScreen(navController, auth = FirebaseAuth.getInstance())
         }
+        composable(Screen.Product.route) { backStackEntry ->
+            val product = navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.get<Product>("product")
 
+            if (product != null) {
+                ProductScreen(navController, product)
+            }
 
+        }
     }
 }

@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -35,6 +32,7 @@ import coil.compose.rememberAsyncImagePainter // CHANGED: Import Coil
 import com.example.gradgoods.nav.BottomNavBar
 import com.example.gradgoods.products.Product
 import com.example.gradgoods.products.ProductsViewModel
+import com.example.gradgoods.nav.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +59,7 @@ fun HomeScreen(
                 )
             }
             item { NewArrivals() }
-            item { PopularProductsSection(productsViewModel) }
+            item { PopularProductsSection(navController,productsViewModel) }
         }
 
         BottomNavBar(
@@ -210,11 +208,9 @@ fun SpecialItem(title: String) {
 
 // CHANGED: This function now displays products from Firestore
 @Composable
-fun PopularProductsSection(productsViewModel: ProductsViewModel) {
+fun PopularProductsSection(navController: NavController, productsViewModel: ProductsViewModel) {
     // Observe products from Firestore
     val products by productsViewModel.products.collectAsState()
-
-//    Spacer(modifier = Modifier.height(25.dp))
 
     Text(
         "Available Product",
@@ -224,7 +220,7 @@ fun PopularProductsSection(productsViewModel: ProductsViewModel) {
     )
 
     if (products.isEmpty()) {
-        // If Firestore is empty or still loading, show your placeholders
+        // If Firestore is empty or still loading, show placeholders
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
@@ -240,16 +236,15 @@ fun PopularProductsSection(productsViewModel: ProductsViewModel) {
                 .fillMaxSize()
                 .padding(15.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-
         ) {
             items(products) { product ->
-                ProductItem(product)
+                ProductItem(product, navController)
             }
         }
     }
 }
 
-// CHANGED: A composable for placeholder items (no image)
+// Placeholder composable for loading state (no image)
 @Composable
 fun ProductItemPlaceholder(title: String, price: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -263,18 +258,21 @@ fun ProductItemPlaceholder(title: String, price: String) {
     }
 }
 
-// CHANGED: A composable that uses Coil to load the product image
+// Product item composable that loads images and navigates correctly
 @Composable
-fun ProductItem(product: Product) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+fun ProductItem(product: Product, navController: NavController) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable {
+            navController.currentBackStackEntry?.savedStateHandle?.set("product", product) // ✅ Pass full product object
+            navController.navigate(Screen.Product.route) // ✅ Navigate to Product Screen
+        }
+    ) {
         val painter = rememberAsyncImagePainter(product.imageUrl) // Coil
         Image(
             painter = painter,
             contentDescription = product.name,
-            modifier = Modifier
-                .size(150.dp)
-
-
+            modifier = Modifier.size(150.dp)
         )
         Text(product.name, fontWeight = FontWeight.Bold, fontSize = 14.sp)
         Text("Ksh.${product.price}", color = Color.Black, fontSize = 14.sp)
