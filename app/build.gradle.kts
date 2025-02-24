@@ -60,6 +60,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.coil)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.compose.material.icons.extended)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

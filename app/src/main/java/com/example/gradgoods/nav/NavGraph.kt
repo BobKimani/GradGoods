@@ -11,12 +11,15 @@ import com.example.gradgoods.screens.SignUpScreen
 import com.example.gradgoods.ui.screens.OnboardingScreen
 import com.example.gradgoods.auth.AuthViewModel
 import com.example.gradgoods.screens.HomeScreen
+import com.example.gradgoods.screens.ProfileScreen
+import com.google.firebase.auth.FirebaseAuth
 
 sealed class Screen(val route: String) {
     object Onboarding : Screen("onboarding")
     object SignIn : Screen("signin")
     object SignUp : Screen("signup")
     object Home : Screen("home") // ✅ Added Home route placeholder for navigation after sign-in
+    object Profile : Screen("profile")
 }
 
 @Composable
@@ -40,6 +43,9 @@ fun AppNavGraph() {
         }
         composable(Screen.Home.route) {
             HomeScreen(navController)
+        }
+        composable(Screen.Profile.route) {
+            ProfileScreen(navController, auth = FirebaseAuth.getInstance())
         }
 
 
