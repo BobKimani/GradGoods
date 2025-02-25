@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -31,7 +32,7 @@ sealed class Screen(val route: String) {
 }
 
 @Composable
-fun AppNavGraph() {
+fun AppNavGraph(navController: NavHostController) {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = viewModel()
     val productsViewModel: ProductsViewModel = viewModel()
@@ -39,7 +40,7 @@ fun AppNavGraph() {
 
     //change it later to Screen.Onboarding.route
 
-            NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Onboarding.route) {
             OnboardingScreen(onContinue = {
                 navController.navigate(Screen.SignIn.route)
@@ -58,9 +59,8 @@ fun AppNavGraph() {
             ProfileScreen(navController, auth = FirebaseAuth.getInstance())
         }
         composable(Screen.Product.route) { backStackEntry ->
-            val product = navController.previousBackStackEntry
-                ?.savedStateHandle
-                ?.get<Product>("product")
+            val product =
+                navController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
 
             if (product != null) {
                 ProductScreen(navController, product, cartViewModel)
