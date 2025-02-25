@@ -39,7 +39,7 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
             .fillMaxSize()
             .background(Color.White)
     ) {
-        Column {
+        Column(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -53,7 +53,11 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = Color(0XFF900C27))
+                        Icon(
+                            Icons.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color(0XFF900C27)
+                        )
                     }
                     Text(
                         text = "Cart",
@@ -62,7 +66,11 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
                         color = Color.Black
                     )
                     IconButton(onClick = { cartViewModel.clearCart() }) {
-                        Icon(Icons.Filled.Delete, contentDescription = "Clear Cart", tint = Color(0XFF900C27))
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = "Clear Cart",
+                            tint = Color(0XFF900C27)
+                        )
                     }
                 }
             }
@@ -74,40 +82,54 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "No items to check out", fontSize = 24.sp, color = Color(0xFF2D336B))
+                    Text(
+                        text = "No items to check out",
+                        fontSize = 24.sp,
+                        color = Color(0xFF2D336B)
+                    )
                 }
             } else {
                 LazyColumn(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 20.dp)
-                        .padding(bottom = 140.dp),
+                        .padding(horizontal = 20.dp),
                     state = scrollState
                 ) {
                     items(cartItems) { product ->
                         CartItem(product, cartViewModel)
                         Spacer(modifier = Modifier.height(20.dp))
                     }
-                    item {
-                        Text(text = "Total Price", fontSize = 16.sp, color = Color.Black)
-                        Text(
-                            text = "Ksh.$totalPrice",
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        Button(
-                            onClick = { /* Navigate to Checkout */ },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D336B)),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(50.dp)
-                        ) {
-                            Text(text = "Check Out", color = Color.White, fontSize = 18.sp)
-                        }
-                    }
+                }
+            }
+        }
+
+        // Total Price & Checkout Section - Adjusted placement with padding
+        if (cartItems.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .padding(20.dp)
+                    .padding(bottom = 110.dp) // Added padding to avoid overlap with BottomNavBar
+            ) {
+                Text(text = "Total Price", fontSize = 16.sp, color = Color.Black)
+                Text(
+                    text = "Ksh.$totalPrice",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Button(
+                    onClick = { /* Navigate to Checkout */ },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D336B)),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                ) {
+                    Text(text = "Check Out", color = Color.White, fontSize = 18.sp)
                 }
             }
         }
@@ -121,6 +143,7 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
         )
     }
 }
+
 
 @Composable
 fun CartItem(product: Product, cartViewModel: CartViewModel) {
@@ -138,17 +161,37 @@ fun CartItem(product: Product, cartViewModel: CartViewModel) {
         )
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = product.name, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold, color = Color.Black)
-            Text(text = "Ksh.${product.price}", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+            Text(
+                text = product.name,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color.Black
+            )
+            Text(
+                text = "Ksh.${product.price}",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { cartViewModel.decreaseQuantity(product) }) {
-                    Text("-", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2D336B))
+                    Text(
+                        "-",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF2D336B)
+                    )
                 }
                 Text(text = "${product.quantity}", fontSize = 22.sp, fontWeight = FontWeight.Bold)
                 IconButton(onClick = { cartViewModel.increaseQuantity(product) }) {
-                    Text("+", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2D336B))
+                    Text(
+                        "+",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF2D336B)
+                    )
                 }
             }
             Button(
