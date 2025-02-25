@@ -35,8 +35,6 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
     // ✅ Navigate to the home screen if the user is authenticated
     LaunchedEffect(user) {
         if (user != null) {
-
-            // Change it to the correct route later
             navController.navigate(Screen.Home.route) {
                 popUpTo(Screen.SignIn.route) { inclusive = true }
             }
@@ -46,7 +44,7 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFFF5E5F3))
+            .background(color = Color.White) // Soft Pink Background
             .padding(top = 50.dp, start = 15.dp, end = 15.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -55,7 +53,7 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
         Text(
             "Welcome Back",
             fontSize = 30.sp,
-            color = Color.Black,
+            color = Color(0xFF2D336B), // Deep Navy
             fontWeight = FontWeight.ExtraBold
         )
 
@@ -63,8 +61,8 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
 
         Text(
             "Sign in with your email or password",
-            fontSize = 20.sp,
-            color = Color.Black
+            fontSize = 22.sp,
+            color = Color(0xFF2D336B) // Deep Navy
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -72,20 +70,28 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = { Text("Email", color = Color(0xFF2D336B)) },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp)
+            shape = RoundedCornerShape(24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF7886C7), // Soft Blue
+                unfocusedBorderColor = Color.Gray
+            )
         )
         Spacer(modifier = Modifier.height(30.dp))
 
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text("Password", color = Color(0xFF2D336B)) },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp)
+            shape = RoundedCornerShape(24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF7886C7), // Soft Blue
+                unfocusedBorderColor = Color.Gray
+            )
         )
 
         Spacer(modifier = Modifier.height(50.dp))
@@ -93,19 +99,23 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
         Button(
             onClick = { viewModel.signIn(email, password) }, // ✅ Trigger Firebase sign-in
             modifier = Modifier
-                .height(50.dp)
+                .height(55.dp)
                 .fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D336B)), // Deep Navy
+
         ) {
-            Text("Continue")
+            Text("Continue",
+                fontSize = 22.sp,
+                color = Color.White)
         }
 
         Spacer(modifier = Modifier.height(30.dp))
 
         Text(
             "-----Or Sign In with------",
-            fontSize = 16.sp,
-            color = Color.Black
+            fontSize = 20.sp,
+            color = Color(0xFF2D336B) // Deep Navy
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -121,22 +131,21 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
         Row {
             Text(
                 "Don't have an account? ",
-                fontSize = 16.sp,
-                color = Color.Black,
+                fontSize = 20.sp,
+                color = Color(0xFF2D336B), // Deep Navy
                 fontWeight = FontWeight.Bold
             )
             Text(
                 "Sign Up",
-                fontSize = 16.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFFA020F0),
                 textDecoration = TextDecoration.Underline,
+                color = Color(0XFF900C27),
                 modifier = Modifier.clickable { navController.navigate(Screen.SignUp.route) }
             )
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

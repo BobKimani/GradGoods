@@ -30,11 +30,10 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
     var confirmPassword by remember { mutableStateOf("") }
     val user by viewModel.user.collectAsStateWithLifecycle()
 
-    // ✅ Updated to navigate to HomeScreen on successful sign-up
     fun onContinue() {
         if (email.isNotBlank() && password == confirmPassword) {
             viewModel.signUp(email, password) {
-                navController.navigate(Screen.Home.route) // Navigate to HomeScreen
+                navController.navigate(Screen.Home.route)
             }
         }
     }
@@ -42,7 +41,7 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFFF5E5F3))
+            .background(color = Color.White) // Changed to vibrant purple theme
             .padding(top = 50.dp, start = 15.dp, end = 15.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -51,7 +50,7 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
         Text(
             "Register Account",
             fontSize = 30.sp,
-            color = Color.Black,
+            color = Color(0xFF2D336B),
             fontWeight = FontWeight.ExtraBold
         )
 
@@ -59,8 +58,8 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
 
         Text(
             "Sign up with your email and password",
-            fontSize = 20.sp,
-            color = Color.Black
+            fontSize = 22.sp,
+            color = Color(0xFF2D336B)
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -68,9 +67,13 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = { Text("Email", color = Color(0xFF2D336B)) },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp)
+            shape = RoundedCornerShape(24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF7886C7), // Soft Blue
+                unfocusedBorderColor = Color.Gray
+            )
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -78,11 +81,15 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text("Password", color = Color(0xFF2D336B)) },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp)
+            shape = RoundedCornerShape(24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF7886C7), // Soft Blue
+                unfocusedBorderColor = Color.Gray
+            )
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -90,11 +97,15 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password") },
+            label = { Text("Confirm Password", color = Color(0xFF2D336B)) },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp)
+            shape = RoundedCornerShape(24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF7886C7), // Soft Blue
+                unfocusedBorderColor = Color.Gray
+            )
         )
 
         Spacer(modifier = Modifier.height(50.dp))
@@ -103,10 +114,13 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
             onClick = { onContinue() },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
-            shape = RoundedCornerShape(12.dp)
+                .height(55.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D336B)) // Purple button
         ) {
-            Text("Continue")
+            Text("Continue",
+                fontSize = 22.sp,
+                color = Color.White)
         }
 
         Spacer(modifier = Modifier.height(35.dp))
@@ -114,27 +128,19 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
         Row {
             Text(
                 "Already have an account? ",
-                fontSize = 16.sp,
-                color = Color.Black,
+                fontSize = 20.sp,
+                color = Color(0xFF2D336B),
                 fontWeight = FontWeight.Bold
             )
 
             Text(
                 "Sign In",
-                fontSize = 16.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFFA020F0),
+                color = Color(0XFF900C27), // Gold text for contrast
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier.clickable { navController.navigate(Screen.SignIn.route) }
             )
         }
     }
 }
-
-/***
-@Preview(showBackground = true)
-@Composable
-fun SignUpPreview() {
-// Ensure proper preview setup here
-}
- ***/

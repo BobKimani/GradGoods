@@ -47,7 +47,7 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF5E5F3))
+                .background(Color.White)
                 .padding(bottom = 56.dp), // Leaves space for BottomNavBar
             contentPadding = PaddingValues(bottom = 80.dp) // Prevents last item from being hidden
         ) {
@@ -78,7 +78,7 @@ fun TopBar(navController: NavController,cartViewModel: CartViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 60.dp, start = 16.dp, end = 16.dp),
+            .padding(top = 70.dp, start = 16.dp, end = 16.dp,bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         OutlinedTextField(
@@ -110,7 +110,7 @@ fun CashbackBanner() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .background(Color(0xFFA020F0), RoundedCornerShape(16.dp))
+            .background(Color(0XFF900C27), RoundedCornerShape(16.dp))
             .padding(24.dp)
             .height(30.dp)
     ) {
@@ -145,7 +145,7 @@ fun CategoryList(categories: List<String>, onCategoryClick: (String) -> Unit) {
                 modifier = Modifier
                     .padding(8.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFFA020F0))
+                    .background(Color(0xFF2D336B))
                     .clickable { onCategoryClick(category) }
                     .padding(16.dp)
             ) {
@@ -276,7 +276,9 @@ fun ProductItem(product: Product, navController: NavController) {
         Image(
             painter = painter,
             contentDescription = product.name,
-            modifier = Modifier.size(150.dp)
+            modifier = Modifier
+                .size(170.dp)
+                .clip(RoundedCornerShape(30.dp))
         )
         Text(product.name, fontWeight = FontWeight.Bold, fontSize = 14.sp)
         Text("Ksh.${product.price}", color = Color.Black, fontSize = 14.sp)

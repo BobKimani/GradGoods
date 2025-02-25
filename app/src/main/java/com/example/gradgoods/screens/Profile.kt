@@ -29,16 +29,12 @@ import com.example.gradgoods.R
 import com.example.gradgoods.nav.*
 import com.google.firebase.auth.FirebaseAuth
 
-val GradGoodsPurple = Color(0xFF6A1B9A)  // Vibrant Purple Theme Color
-val DarkPurple = Color(0xFFF5E5F3)
-val LightPurple = Color(0xFFCE93D8)
-
 @Composable
 fun ProfileScreen(navController: NavController, auth: FirebaseAuth) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkPurple)
+            .background(Color.White)
             .padding(top = 50.dp)
     ) {
         Column( // Changed from LazyColumn to Column
@@ -58,7 +54,7 @@ fun ProfileScreen(navController: NavController, auth: FirebaseAuth) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(DarkPurple, shape = RoundedCornerShape(12.dp))
+                    .background(Color.White, shape = RoundedCornerShape(12.dp))
                     .padding(16.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -71,8 +67,8 @@ fun ProfileScreen(navController: NavController, auth: FirebaseAuth) {
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
-                        Text(text = userName, fontSize = 24.sp, color = Color.Black, fontWeight = FontWeight.ExtraBold)
-                        Text(text = userEmail, fontSize = 20.sp, color = Color.Black)
+                        Text(text = userName, fontSize = 24.sp, color = Color(0XFF900C27), fontWeight = FontWeight.ExtraBold)
+                        Text(text = userEmail, fontSize = 20.sp, color = Color(0XFF900C27))
                     }
                 }
             }
@@ -108,7 +104,7 @@ fun ProfileScreen(navController: NavController, auth: FirebaseAuth) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = GradGoodsPurple),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D336B)),
 
                 ) {
                     Text("Log Out", color = Color.White, fontSize = 20.sp)
@@ -147,7 +143,7 @@ fun ProfileOption(label: String, icon: ImageVector) {
             .clickable {},
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(imageVector = icon, contentDescription = label, tint = GradGoodsPurple, modifier = Modifier.size(24.dp))
+        Icon(imageVector = icon, contentDescription = label, tint = Color(0xFF2D336B), modifier = Modifier.size(24.dp))
         Spacer(modifier = Modifier.height(40.dp))
         Text(text = label, fontSize = 18.sp, color = Color.Black)
     }

@@ -29,8 +29,8 @@ sealed class BottomNavItem(
 fun BottomNavBar(selectedRoute: String, onItemSelected: (String) -> Unit, modifier: Modifier = Modifier) {
     NavigationBar(
         modifier = modifier.fillMaxWidth(),
-        containerColor = Color.LightGray,
-        contentColor = Color.White
+        containerColor = Color.White,
+        contentColor = Color(0xFF2D336B)
     ) {
         val items = listOf(BottomNavItem.Home, BottomNavItem.Cart, BottomNavItem.Profile)
 

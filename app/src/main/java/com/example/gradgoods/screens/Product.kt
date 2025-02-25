@@ -35,7 +35,7 @@ fun ProductScreen(navController: NavController, product: Product,cartViewModel: 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkPurple)
+            .background(Color.White)
             .padding(top = 50.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
     ) {
         // Top Bar with Back and Favorite buttons
@@ -101,7 +101,7 @@ fun ProductScreen(navController: NavController, product: Product,cartViewModel: 
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(start= 40.dp, end = 40.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = GradGoodsPurple),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D336B)),
             shape = RoundedCornerShape(10.dp)
         ) {
             Text(text = "Add to Cart", color = Color.White, fontSize = 18.sp)
