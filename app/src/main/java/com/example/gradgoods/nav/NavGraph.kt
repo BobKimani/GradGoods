@@ -18,6 +18,7 @@ import com.example.gradgoods.screens.ProductScreen
 import com.example.gradgoods.screens.ProfileScreen
 import com.example.gradgoods.model.Product
 import com.example.gradgoods.model.ProductsViewModel
+import com.example.gradgoods.model.PaymentViewModel
 import com.example.gradgoods.screens.CartScreen
 import com.google.firebase.auth.FirebaseAuth
 
@@ -37,6 +38,7 @@ fun AppNavGraph(navController: NavHostController) {
     val authViewModel: AuthViewModel = viewModel()
     val productsViewModel: ProductsViewModel = viewModel()
     val cartViewModel: CartViewModel = viewModel()
+    val paymentViewModel: PaymentViewModel = viewModel()
 
     //change it later to Screen.Onboarding.route
 
@@ -69,7 +71,7 @@ fun AppNavGraph(navController: NavHostController) {
         }
         composable(Screen.Cart.route) {
 //            val cartViewModel = hiltViewModel<CartViewModel>()
-            CartScreen(navController, cartViewModel)
+            CartScreen(navController, cartViewModel, paymentViewModel)
         }
     }
 }

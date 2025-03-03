@@ -19,20 +19,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import kotlin.math.max
 import com.example.gradgoods.model.CartViewModel
+import com.example.gradgoods.model.PaymentViewModel
 import com.example.gradgoods.model.Product
 import com.example.gradgoods.nav.BottomNavBar
+import kotlin.math.max
 
 @Composable
-fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
+fun CartScreen(navController: NavController, cartViewModel: CartViewModel, paymentViewModel: PaymentViewModel) {
     val cartItems by cartViewModel.cartItems.collectAsState()
     val totalPrice = cartViewModel.getTotalPrice()
 
     val scrollState = rememberLazyListState()
     val scrollOffset by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset.toFloat() } }
-
     val collapseFactor = max(0.7f, 1f - (scrollOffset / 400f))
+
+    val showDialog by paymentViewModel.showPaymentDialog.collectAsState()
+    val paymentStatus by paymentViewModel.paymentStatus.collectAsState()
 
     Box(
         modifier = Modifier
@@ -122,7 +125,7 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
-                    onClick = { /* Navigate to Checkout */ },
+                    onClick = { paymentViewModel.showPaymentOptions() },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D336B)),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
@@ -134,7 +137,19 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
             }
         }
 
-        BottomNavBar(
+        if (showDialog) {
+            PaymentDialog(
+                onDismiss = { paymentViewModel.dismissPaymentDialog() },
+                onMpesa = { paymentViewModel.initiateMpesaPayment(totalPrice) },
+                onPaypal = { paymentViewModel.initiatePaypalPayment(totalPrice) }
+            )
+        }
+
+        if (paymentStatus != null) {
+            PaymentStatusDialog(paymentStatus!!, onDismiss = { paymentViewModel.clearPaymentStatus() })
+        }
+
+    BottomNavBar(
             selectedRoute = "cart",
             onItemSelected = { navController.navigate(it) },
             modifier = Modifier
@@ -143,7 +158,6 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
         )
     }
 }
-
 
 @Composable
 fun CartItem(product: Product, cartViewModel: CartViewModel) {
@@ -204,4 +218,44 @@ fun CartItem(product: Product, cartViewModel: CartViewModel) {
             }
         }
     }
+}
+
+@Composable
+fun PaymentDialog(onDismiss: () -> Unit, onMpesa: () -> Unit, onPaypal: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Select Payment Method") },
+        text = { Text("Choose how you want to pay.") },
+        confirmButton = {
+            Column {
+                Button(onClick = onMpesa, colors = ButtonDefaults.buttonColors(containerColor = Color.Green)) {
+                    Text("Pay with Mpesa")
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Button(onClick = onPaypal, colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)) {
+                    Text("Pay with PayPal")
+                }
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+@Composable
+fun PaymentStatusDialog(status: String, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Payment Status") },
+        text = { Text(status) },
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text("OK")
+            }
+        }
+    )
 }
