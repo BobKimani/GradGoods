@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+//import androidx.compose.ui.node.CanFocusChecker.start
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -225,22 +226,22 @@ fun PaymentDialog(onDismiss: () -> Unit, onMpesa: () -> Unit, onPaypal: () -> Un
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Select Payment Method") },
-        text = { Text("Choose how you want to pay.") },
         confirmButton = {
-            Column {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+//                modifier = Modifier.padding(start = 16.dp)
+                ) {
                 Button(onClick = onMpesa, colors = ButtonDefaults.buttonColors(containerColor = Color.Green)) {
                     Text("Pay with Mpesa")
                 }
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Button(onClick = onPaypal, colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)) {
-                    Text("Pay with PayPal")
+                Button(onClick = onDismiss) {
+                    Text("Cancel")
+
                 }
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text("Cancel")
+
             }
         }
     )
