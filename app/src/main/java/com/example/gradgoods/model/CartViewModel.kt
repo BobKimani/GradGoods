@@ -1,5 +1,6 @@
 package com.example.gradgoods.model
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -9,17 +10,22 @@ class CartViewModel : ViewModel() {
     private val _cartItems = MutableStateFlow<List<Product>>(emptyList())
     val cartItems: StateFlow<List<Product>> = _cartItems
 
-    fun addToCart(product: Product) {
+    fun addToCart(product: Product, quantity : Int) {
         val currentCart = _cartItems.value.toMutableList()
         val existingIndex = currentCart.indexOfFirst { it.id == product.id }
 
         if (existingIndex != -1) {
-            currentCart[existingIndex] = currentCart[existingIndex].copy(quantity = currentCart[existingIndex].quantity + 1)
+            val existingProduct = currentCart[existingIndex]
+            currentCart[existingIndex] = existingProduct.copy(
+                quantity = existingProduct.quantity + quantity
+            )
         } else {
-            currentCart.add(product.copy(quantity = 1))
+            currentCart.add(product.copy(quantity = quantity))
         }
 
         _cartItems.value = currentCart
+
+        Log.d("CartDebug", "Cart Updated: ${_cartItems.value}")
     }
 
     fun removeFromCart(product: Product) {

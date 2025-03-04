@@ -1,5 +1,6 @@
 package com.example.gradgoods.screens
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 //import androidx.compose.ui.node.CanFocusChecker.start
 import androidx.compose.ui.text.font.FontWeight
@@ -35,8 +37,8 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel, payme
     val scrollOffset by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset.toFloat() } }
     val collapseFactor = max(0.7f, 1f - (scrollOffset / 400f))
 
-    val showDialog by paymentViewModel.showPaymentDialog.collectAsState()
-    val paymentStatus by paymentViewModel.paymentStatus.collectAsState()
+    var phoneNumber by remember { mutableStateOf("") }
+    var showPaymentDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -126,28 +128,53 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel, payme
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
-                    onClick = { paymentViewModel.showPaymentOptions() },
+                    onClick = { showPaymentDialog = true },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D336B)),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
+
                 ) {
                     Text(text = "Check Out", color = Color.White, fontSize = 18.sp)
                 }
             }
-        }
 
-        if (showDialog) {
-            PaymentDialog(
-                onDismiss = { paymentViewModel.dismissPaymentDialog() },
-                onMpesa = { paymentViewModel.initiateMpesaPayment(totalPrice) },
-                onPaypal = { paymentViewModel.initiatePaypalPayment(totalPrice) }
-            )
-        }
 
-        if (paymentStatus != null) {
-            PaymentStatusDialog(paymentStatus!!, onDismiss = { paymentViewModel.clearPaymentStatus() })
+            if (showPaymentDialog) {
+                AlertDialog(
+                    onDismissRequest = { showPaymentDialog = false },
+                    title = { Text("Please enter phone number") },
+                    text = {
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        TextField(
+                            value = phoneNumber,
+                            onValueChange = { phoneNumber = it },
+                            label = { Text("M-Pesa Number") },
+                            modifier = Modifier.clip(RoundedCornerShape(12.dp))
+                        )
+                    },
+                    confirmButton = {
+                        Button(onClick = {
+                            showPaymentDialog = true
+                            paymentViewModel.initiateMpesaPayment(
+                                phoneNumber = phoneNumber,
+                                amount = totalPrice.toString(),
+                                onSuccess = { Log.d("Mpesa", "Payment successful") },
+                                onFailure = { error -> Log.e("Mpesa", "Payment failed: $error") }
+                            )
+                        }) {
+                            Text("Pay Now")
+                        }
+                    },
+                    dismissButton = {
+                        Button(onClick = { showPaymentDialog = false }) {
+                            Text("Cancel")
+                        }
+                    }
+                )
+            }
         }
 
     BottomNavBar(
@@ -219,44 +246,4 @@ fun CartItem(product: Product, cartViewModel: CartViewModel) {
             }
         }
     }
-}
-
-@Composable
-fun PaymentDialog(onDismiss: () -> Unit, onMpesa: () -> Unit, onPaypal: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Select Payment Method") },
-        confirmButton = {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-//                modifier = Modifier.padding(start = 16.dp)
-                ) {
-                Button(onClick = onMpesa, colors = ButtonDefaults.buttonColors(containerColor = Color.Green)) {
-                    Text("Pay with Mpesa")
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Button(onClick = onDismiss) {
-                    Text("Cancel")
-
-                }
-
-            }
-        }
-    )
-}
-
-@Composable
-fun PaymentStatusDialog(status: String, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Payment Status") },
-        text = { Text(status) },
-        confirmButton = {
-            Button(onClick = onDismiss) {
-                Text("OK")
-            }
-        }
-    )
 }

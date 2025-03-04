@@ -1,5 +1,6 @@
 package com.example.gradgoods.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -94,7 +95,9 @@ fun ProductScreen(navController: NavController, product: Product,cartViewModel: 
         // Add to Cart Button
         Button(
             onClick = {
-                cartViewModel.addToCart(product.copy(quantity = quantity))
+                Log.d("CartDebug", "Selected Quantity before adding to cart: $quantity")
+
+                cartViewModel.addToCart(product, quantity)
                 navController.navigate(Screen.Cart.route)
                       },
             modifier = Modifier
