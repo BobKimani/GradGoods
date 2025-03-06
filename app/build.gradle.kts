@@ -1,12 +1,22 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.gms.google.services)
     id ("kotlin-parcelize")
-    id("dagger.hilt.android.plugin")
-    alias(libs.plugins.hilt.android)
     kotlin("kapt")
+}
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(localPropertiesFile.inputStream())
+    } else {
+        // Fallback or error handling if local.properties is missing
+        throw GradleException("local.properties file not found. Please create it with CONSUMER_KEY, CONSUMER_SECRET, and PASS_KEY.")
+    }
 }
 
 android {
@@ -21,6 +31,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Add buildConfigField in defaultConfig for all build types
+        buildConfigField("String", "CONSUMER_KEY", "\"${localProperties["CONSUMER_KEY"]}\"")
+        buildConfigField("String", "CONSUMER_SECRET", "\"${localProperties["CONSUMER_SECRET"]}\"")
+        buildConfigField("String", "PASS_KEY", "\"${localProperties["PASS_KEY"]}\"")
     }
 
     buildTypes {
@@ -40,6 +55,7 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }
@@ -64,9 +80,13 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
     implementation(libs.androidx.compose.material.icons.extended)
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
+    implementation(libs.retrofit)
+    implementation(libs.gson)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.okhttp)
 
 
     testImplementation(libs.junit)

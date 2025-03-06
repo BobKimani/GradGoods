@@ -1,11 +1,13 @@
-package com.example.gradgoods.model
+package com.example.gradgoods.api
 
-data class AccessTokenResponse(
+// OAuth Token Response
+data class TokenResponse(
     val access_token: String,
     val expires_in: String
 )
 
-data class StkPushRequest(
+// STK Push Request Payload
+data class STKPushRequest(
     val BusinessShortCode: String,
     val Password: String,
     val Timestamp: String,
@@ -19,10 +21,12 @@ data class StkPushRequest(
     val TransactionDesc: String
 )
 
-data class StkPushResponse(
-    val MerchantRequestID: String,
-    val CheckoutRequestID: String,
+// STK Push Response
+data class STKPushResponse(
+    val MerchantRequestID: String?,
+    val CheckoutRequestID: String?,
     val ResponseCode: String,
     val ResponseDescription: String,
-    val CustomerMessage: String
+    val ResultCode: String?,
+    val ResultDesc: String?
 )

@@ -16,20 +16,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-//import androidx.compose.ui.node.CanFocusChecker.start
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.getValue
 import coil.compose.AsyncImage
 import com.example.gradgoods.model.CartViewModel
-import com.example.gradgoods.model.PaymentViewModel
+import com.example.gradgoods.model.MpesaViewModel
 import com.example.gradgoods.model.Product
 import com.example.gradgoods.nav.BottomNavBar
 import kotlin.math.max
 
 @Composable
-fun CartScreen(navController: NavController, cartViewModel: CartViewModel, paymentViewModel: PaymentViewModel) {
+fun CartScreen(
+    navController: NavController,
+    cartViewModel: CartViewModel,
+    mpesaViewModel: MpesaViewModel
+) {
     val cartItems by cartViewModel.cartItems.collectAsState()
     val totalPrice = cartViewModel.getTotalPrice()
 
@@ -39,6 +44,10 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel, payme
 
     var phoneNumber by remember { mutableStateOf("") }
     var showPaymentDialog by remember { mutableStateOf(false) }
+
+    // Observe StateFlow with collectAsState
+    val paymentStatus by mpesaViewModel.paymentStatus.collectAsState()
+    val isLoading by mpesaViewModel.isLoading.collectAsState()
 
     Box(
         modifier = Modifier
@@ -95,21 +104,24 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel, payme
                     )
                 }
             } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 20.dp),
-                    state = scrollState
-                ) {
-                    items(cartItems) { product ->
-                        CartItem(product, cartViewModel)
-                        Spacer(modifier = Modifier.height(20.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp)
+                            .padding(PaddingValues(bottom = 60.dp)),
+                        state = scrollState
+                    ) {
+                        items(cartItems) { product ->
+                            CartItem(product, cartViewModel)
+                            Spacer(modifier = Modifier.height(20.dp))
+                        }
                     }
                 }
             }
         }
 
-        // Total Price & Checkout Section - Adjusted placement with padding
+        // Total Price & Checkout Section
         if (cartItems.isNotEmpty()) {
             Column(
                 modifier = Modifier
@@ -117,7 +129,7 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel, payme
                     .fillMaxWidth()
                     .background(Color.White)
                     .padding(20.dp)
-                    .padding(bottom = 110.dp) // Added padding to avoid overlap with BottomNavBar
+                    .padding(bottom = 110.dp)
             ) {
                 Text(text = "Total Price", fontSize = 16.sp, color = Color.Black)
                 Text(
@@ -134,50 +146,77 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel, payme
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
-
                 ) {
-                    Text(text = "Check Out", color = Color.White, fontSize = 18.sp)
+                    Text(text = "Proceed to pay", color = Color.White, fontSize = 18.sp)
                 }
             }
 
-
             if (showPaymentDialog) {
                 AlertDialog(
-                    onDismissRequest = { showPaymentDialog = false },
+                    onDismissRequest = { if (!isLoading) showPaymentDialog = false },
                     title = { Text("Please enter phone number") },
                     text = {
-                        Spacer(modifier = Modifier.height(18.dp))
-
-                        TextField(
-                            value = phoneNumber,
-                            onValueChange = { phoneNumber = it },
-                            label = { Text("M-Pesa Number") },
-                            modifier = Modifier.clip(RoundedCornerShape(12.dp))
-                        )
+                        Column {
+                            Spacer(modifier = Modifier.height(18.dp))
+                            TextField(
+                                value = phoneNumber,
+                                onValueChange = { phoneNumber = it },
+                                label = { Text("M-Pesa Number (e.g., 2547XXXXXXXX)") },
+                                modifier = Modifier.clip(RoundedCornerShape(12.dp)),
+                                enabled = !isLoading
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            if (paymentStatus.isNotEmpty()) {
+                                Text(
+                                    text = paymentStatus,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = if (paymentStatus.contains("Error") || paymentStatus.contains("Failed")) {
+                                        MaterialTheme.colorScheme.error
+                                    } else {
+                                        MaterialTheme.colorScheme.primary
+                                    }
+                                )
+                            }
+                            if (isLoading) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                            }
+                        }
                     },
                     confirmButton = {
-                        Button(onClick = {
-                            showPaymentDialog = true
-                            paymentViewModel.initiateMpesaPayment(
-                                phoneNumber = phoneNumber,
-                                amount = totalPrice.toString(),
-                                onSuccess = { Log.d("Mpesa", "Payment successful") },
-                                onFailure = { error -> Log.e("Mpesa", "Payment failed: $error") }
-                            )
-                        }) {
+                        Button(
+                            onClick = {
+                                mpesaViewModel.initiateSTKPush(
+                                    phoneNumber = phoneNumber,
+                                    amount = totalPrice.toString()
+                                )
+                            },
+                            enabled = phoneNumber.isNotEmpty() && !isLoading
+                        ) {
                             Text("Pay Now")
                         }
                     },
                     dismissButton = {
-                        Button(onClick = { showPaymentDialog = false }) {
+                        Button(
+                            onClick = { showPaymentDialog = false },
+                            enabled = !isLoading
+                        ) {
                             Text("Cancel")
                         }
                     }
                 )
             }
+
+            // Reset payment status when dialog is dismissed
+            LaunchedEffect(showPaymentDialog) {
+                if (!showPaymentDialog) {
+                    phoneNumber = ""
+                    mpesaViewModel.resetPaymentResult()
+                }
+            }
         }
 
-    BottomNavBar(
+        BottomNavBar(
             selectedRoute = "cart",
             onItemSelected = { navController.navigate(it) },
             modifier = Modifier

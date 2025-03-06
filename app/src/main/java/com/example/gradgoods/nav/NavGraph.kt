@@ -1,7 +1,6 @@
 package com.example.gradgoods.nav
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
@@ -18,7 +17,7 @@ import com.example.gradgoods.screens.ProductScreen
 import com.example.gradgoods.screens.ProfileScreen
 import com.example.gradgoods.model.Product
 import com.example.gradgoods.model.ProductsViewModel
-import com.example.gradgoods.model.PaymentViewModel
+import com.example.gradgoods.model.MpesaViewModel
 import com.example.gradgoods.screens.CartScreen
 import com.google.firebase.auth.FirebaseAuth
 
@@ -38,7 +37,7 @@ fun AppNavGraph(navController: NavHostController) {
     val authViewModel: AuthViewModel = viewModel()
     val productsViewModel: ProductsViewModel = viewModel()
     val cartViewModel: CartViewModel = viewModel()
-    val paymentViewModel: PaymentViewModel = viewModel()
+    val mpesaViewModel: MpesaViewModel = viewModel()
 
     //change it later to Screen.Onboarding.route
 
@@ -67,11 +66,9 @@ fun AppNavGraph(navController: NavHostController) {
             if (product != null) {
                 ProductScreen(navController, product, cartViewModel)
             }
-
         }
         composable(Screen.Cart.route) {
-//            val cartViewModel = hiltViewModel<CartViewModel>()
-            CartScreen(navController, cartViewModel, paymentViewModel)
+            CartScreen(navController, cartViewModel, mpesaViewModel)
         }
     }
 }
