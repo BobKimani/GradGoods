@@ -41,7 +41,7 @@ fun AppNavGraph(navController: NavHostController) {
 
     //change it later to Screen.Onboarding.route
 
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(navController = navController, startDestination = Screen.Onboarding.route) {
         composable(Screen.Onboarding.route) {
             OnboardingScreen(onContinue = {
                 navController.navigate(Screen.SignIn.route)
