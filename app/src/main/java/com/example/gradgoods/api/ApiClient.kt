@@ -4,12 +4,13 @@ import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import android.util.Log // For debugging
+import android.util.Log
+
 
 object ApiClient {
-    private const val BASE_URL = "https://sandbox.safaricom.co.ke/"
-    private const val CONSUMER_KEY = "your_consumer_key" // Replace with your key
-    private const val CONSUMER_SECRET = "your_consumer_secret" // Replace with your secret
+    private val BASE_URL = AppConfig.baseurl
+    private val CONSUMER_KEY = AppConfig.consumerkey
+    private val CONSUMER_SECRET = AppConfig.consumersecret
 
     private fun getOkHttpClient(token: String? = null): OkHttpClient {
         return OkHttpClient.Builder()

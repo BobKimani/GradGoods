@@ -38,6 +38,7 @@ fun AppNavGraph(navController: NavHostController) {
     val productsViewModel: ProductsViewModel = viewModel()
     val cartViewModel: CartViewModel = viewModel()
     val mpesaViewModel: MpesaViewModel = viewModel()
+    val auth = FirebaseAuth.getInstance()
 
     //change it later to Screen.Onboarding.route
 
@@ -57,7 +58,7 @@ fun AppNavGraph(navController: NavHostController) {
             HomeScreen(navController, productsViewModel, cartViewModel)
         }
         composable(Screen.Profile.route) {
-            ProfileScreen(navController, auth = FirebaseAuth.getInstance())
+            ProfileScreen(navController, auth)
         }
         composable(Screen.Product.route) { backStackEntry ->
             val product =

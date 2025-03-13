@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import android.util.Base64
 import android.util.Log // Add this import
+import com.example.gradgoods.api.AppConfig
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -20,9 +21,9 @@ class MpesaViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> get() = _isLoading
 
-    private val shortcode = "174379"
-    private val passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
-    private val callbackUrl = "https://webhook.site/2b32da6a-4cb8-4e1f-acad-d4795eb024ba" // Replace with your Webhook.site URL
+    private val shortcode = AppConfig.shortcode
+    private val passkey = AppConfig.passkey
+    private val callbackUrl = AppConfig.callbackUrl
 
     fun initiateSTKPush(phoneNumber: String, amount: String) {
         if (!isValidPhoneNumber(phoneNumber)) {
