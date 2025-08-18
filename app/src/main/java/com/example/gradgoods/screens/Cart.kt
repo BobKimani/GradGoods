@@ -24,9 +24,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import coil.compose.AsyncImage
 import com.example.gradgoods.model.CartViewModel
-import com.example.gradgoods.model.MpesaViewModel
 import com.example.gradgoods.model.Product
 import com.example.gradgoods.nav.BottomNavBar
+import com.example.gradgoods.model.MpesaViewModel
 import kotlin.math.max
 
 @Composable
@@ -42,10 +42,9 @@ fun CartScreen(
     val scrollOffset by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset.toFloat() } }
     val collapseFactor = max(0.7f, 1f - (scrollOffset / 400f))
 
-    var phoneNumber by remember { mutableStateOf("") }
     var showPaymentDialog by remember { mutableStateOf(false) }
+    var phoneNumber by remember { mutableStateOf("") }
 
-    // Observe StateFlow with collectAsState
     val paymentStatus by mpesaViewModel.paymentStatus.collectAsState()
     val isLoading by mpesaViewModel.isLoading.collectAsState()
 
@@ -55,6 +54,7 @@ fun CartScreen(
             .background(Color.White)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            // Header
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -69,9 +69,9 @@ fun CartScreen(
                 ) {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            Icons.Filled.ArrowBack,
+                            imageVector = Icons.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color(0XFF900C27)
+                            tint = Color(0xFF900C27)
                         )
                     }
                     Text(
@@ -82,9 +82,9 @@ fun CartScreen(
                     )
                     IconButton(onClick = { cartViewModel.clearCart() }) {
                         Icon(
-                            Icons.Filled.Delete,
+                            imageVector = Icons.Filled.Delete,
                             contentDescription = "Clear Cart",
-                            tint = Color(0XFF900C27)
+                            tint = Color(0xFF900C27)
                         )
                     }
                 }
@@ -92,6 +92,7 @@ fun CartScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            // Cart Content
             if (cartItems.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -104,18 +105,17 @@ fun CartScreen(
                     )
                 }
             } else {
-                Column(modifier = Modifier.weight(1f)) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 20.dp)
-                            .padding(PaddingValues(bottom = 60.dp)),
-                        state = scrollState
-                    ) {
-                        items(cartItems) { product ->
-                            CartItem(product, cartViewModel)
-                            Spacer(modifier = Modifier.height(20.dp))
-                        }
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp)
+                        .padding(PaddingValues(bottom = 60.dp)),
+                    state = scrollState
+                ) {
+                    items(cartItems) { product ->
+                        CartItem(product, cartViewModel)
+                        Spacer(modifier = Modifier.height(20.dp))
                     }
                 }
             }
@@ -129,7 +129,7 @@ fun CartScreen(
                     .fillMaxWidth()
                     .background(Color.White)
                     .padding(20.dp)
-                    .padding(bottom = 110.dp)
+                    .padding(bottom = 100.dp),
             ) {
                 Text(text = "Total Price", fontSize = 16.sp, color = Color.Black)
                 Text(
@@ -151,6 +151,7 @@ fun CartScreen(
                 }
             }
 
+            // Payment Dialog
             if (showPaymentDialog) {
                 AlertDialog(
                     onDismissRequest = { if (!isLoading) showPaymentDialog = false },
@@ -170,7 +171,8 @@ fun CartScreen(
                                 Text(
                                     text = paymentStatus,
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = if (paymentStatus.contains("Error") || paymentStatus.contains("Failed")) {
+                                    color = if (paymentStatus.contains("Error", ignoreCase = true) ||
+                                        paymentStatus.contains("Failed", ignoreCase = true)) {
                                         MaterialTheme.colorScheme.error
                                     } else {
                                         MaterialTheme.colorScheme.primary
@@ -207,7 +209,7 @@ fun CartScreen(
                 )
             }
 
-            // Reset payment status when dialog is dismissed
+            // Reset payment state when dialog is dismissed
             LaunchedEffect(showPaymentDialog) {
                 if (!showPaymentDialog) {
                     phoneNumber = ""

@@ -1,100 +1,82 @@
 package com.example.gradgoods.model
 
+import android.util.Base64
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gradgoods.api.ApiClient
-import com.example.gradgoods.api.STKPushRequest
+import com.example.gradgoods.model.StkPushRequest
+import com.example.gradgoods.network.MpesaRetrofitInstance
+import com.example.gradgoods.network.AppConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import android.util.Base64
-import android.util.Log // Add this import
-import com.example.gradgoods.api.AppConfig
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class MpesaViewModel : ViewModel() {
     private val _paymentStatus = MutableStateFlow("")
-    val paymentStatus: StateFlow<String> get() = _paymentStatus
+    val paymentStatus: StateFlow<String> = _paymentStatus
 
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> get() = _isLoading
+    val isLoading: StateFlow<Boolean> = _isLoading
 
-    private val shortcode = AppConfig.shortcode
-    private val passkey = AppConfig.passkey
-    private val callbackUrl = AppConfig.callbackUrl
+    private fun getBasicAuth(): String {
+        val credentials = "${AppConfig.consumerkey}:${AppConfig.consumersecret}"
+        val auth = "Basic " + Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
+        Log.d("MpesaAuth", "Generated Basic Auth: $auth")
+        return auth
+    }
+
+    private suspend fun fetchMpesaToken(): String {
+        val authHeader = getBasicAuth()
+        val tokenResponse = MpesaRetrofitInstance.api.getAccessToken(authHeader)
+        Log.d("MpesaToken", "Full Token Response: $tokenResponse")
+        Log.d("MpesaToken", "Fetched Token: ${tokenResponse.access_token}")
+        return tokenResponse.access_token
+    }
 
     fun initiateSTKPush(phoneNumber: String, amount: String) {
-        if (!isValidPhoneNumber(phoneNumber)) {
-            _paymentStatus.value = "Invalid phone number. Use format 2547XXXXXXXX."
-            return
-        }
-
-        _isLoading.value = true
-
         viewModelScope.launch {
+            _isLoading.value = true
+            _paymentStatus.value = ""
             try {
-                val tokenResponse = ApiClient.mpesaApi.getAccessToken()
-                Log.d("Mpesa", "Token Response Code: ${tokenResponse.code()}")
-                if (!tokenResponse.isSuccessful) {
-                    _paymentStatus.value = "Failed to get access token: ${tokenResponse.code()} - ${tokenResponse.message()}"
-                    _isLoading.value = false
-                    return@launch
-                }
-                val accessToken = tokenResponse.body()?.access_token ?: run {
-                    _paymentStatus.value = "Access token is null"
-                    _isLoading.value = false
-                    return@launch
-                }
-                Log.d("Mpesa", "Access Token: $accessToken")
+                val accessToken = fetchMpesaToken()
+                val timestamp = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault())
+                    .format(Date())
+                val password = Base64.encodeToString(
+                    "${AppConfig.shortcode}${AppConfig.passkey}$timestamp".toByteArray(),
+                    Base64.NO_WRAP
+                )
+                Log.d("MpesaPassword", "Generated Password: $password")
 
-                val timestamp = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(Date())
-                val password = Base64.encodeToString("$shortcode$passkey$timestamp".toByteArray(), Base64.NO_WRAP)
-                Log.d("Mpesa", "Password: $password")
-
-                val request = STKPushRequest(
-                    BusinessShortCode = shortcode,
+                val stkPushRequest = StkPushRequest(
+                    BusinessShortCode = AppConfig.shortcode,
                     Password = password,
                     Timestamp = timestamp,
-                    TransactionType = "CustomerPayBillOnline",
                     Amount = amount,
-                    PartyA = "254708374149", // Hardcode sandbox test number
-                    PartyB = shortcode,
-                    PhoneNumber = "254708374149", // Hardcode sandbox test number
-                    CallBackURL = callbackUrl,
-                    AccountReference = "Test123",
-                    TransactionDesc = "Payment for testing"
+                    PartyA = phoneNumber,
+                    PartyB = AppConfig.shortcode,
+                    PhoneNumber = phoneNumber,
+                    CallBackURL = AppConfig.callbackUrl,
+                    AccountReference = "GradGoods Payment",
+                    TransactionDesc = "Payment for items"
                 )
-                Log.d("Mpesa", "STK Push Request: $request")
 
-                val response = ApiClient.getSTKApi(accessToken).initiateSTKPush(request)
-                Log.d("Mpesa", "Response Code: ${response.code()}, Message: ${response.message()}")
+                Log.d("MpesaRequest", "STK Push Request Body: $stkPushRequest")
+                val authHeader = "Bearer $accessToken"
+                Log.d("MpesaRequest", "STK Push Auth Header: $authHeader")
+                val response = MpesaRetrofitInstance.api.stkPush(authHeader, stkPushRequest)
+                _paymentStatus.value = response.CustomerMessage
+                Log.d("Mpesa", "STK Push Response: ${response.CustomerMessage}")
 
-                if (response.isSuccessful) {
-                    val stkResponse = response.body()
-                    Log.d("Mpesa", "STK Response: $stkResponse")
-                    if (stkResponse?.ResponseCode == "0") {
-                        _paymentStatus.value = "STK Push initiated. Check your phone."
-                    } else {
-                        _paymentStatus.value = "Error: ${stkResponse?.ResponseDescription}"
-                    }
-                } else {
-                    val errorBody = response.errorBody()?.string()
-                    _paymentStatus.value = "Failed: ${response.code()} - ${response.message()} - $errorBody"
-                    Log.d("Mpesa", "Error Body: $errorBody")
-                }
             } catch (e: Exception) {
                 _paymentStatus.value = "Error: ${e.message}"
-                Log.e("Mpesa", "Exception: ${e.stackTraceToString()}")
+                Log.e("Mpesa", "Error processing payment", e)
             } finally {
                 _isLoading.value = false
             }
         }
-    }
-
-    private fun isValidPhoneNumber(phoneNumber: String): Boolean {
-        return phoneNumber.startsWith("254") && phoneNumber.length == 12
     }
 
     fun resetPaymentResult() {

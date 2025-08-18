@@ -87,6 +87,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.appcompat)
     implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation("com.androidstudy.daraja:daraja:2.0.2")
 
 
     testImplementation(libs.junit)

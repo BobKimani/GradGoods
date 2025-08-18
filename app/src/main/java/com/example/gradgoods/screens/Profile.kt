@@ -100,7 +100,12 @@ fun ProfileScreen(navController: NavController, auth: FirebaseAuth) {
 
                 // Logout Button
                 Button(
-                    onClick = { auth.signOut() },
+                    onClick = {
+                        auth.signOut()
+                        navController.navigate("onboarding") {
+                            popUpTo(0) { inclusive = true }
+                        }},
+
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(60.dp),

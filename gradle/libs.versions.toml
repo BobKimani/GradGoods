@@ -12,14 +12,14 @@ accompanist = "0.32.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.2.0"
 compose = "1.6.0"
-navigation = "2.8.8"
+navigation = "2.8.9"
 firebase-bom = "33.9.0"
 coil = "2.5.0"
 compose-material-icons-extended = "1.7.8"
 retrofit = "2.9.0"
 gson = "2.10.1"
 kotlinx-coroutines = "1.7.3"
-okhttp = "4.10.0"
+okhttp = "4.12.0"
 appcompat = "1.6.1"
 
 [libraries]
@@ -54,6 +54,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
